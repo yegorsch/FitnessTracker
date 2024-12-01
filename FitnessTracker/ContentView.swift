@@ -7,35 +7,26 @@
 
 import SwiftUI
 import SwiftData
-
+/*
+ You can inout any expecise to any category and we will automatically sort them into workouts based on a date
+ */
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query(sort:\MuscleGroup.id, order: .forward) private var items: [MuscleGroup]
 
     var body: some View {
-        NavigationSplitView {
+        NavigationStack {
             List {
                 ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+                    Section(header: Text(item.localizaedName)) {
+                        NavigationLink("Add new item") {
+                            AddExerciseEntryView(muscleGroup: item, exercise: nil)
+                        }
+                    }.headerProminence(.increased)
                 }
             }
-        } detail: {
-            Text("Select an item")
+        }.onAppear {
+            addDefaultMuscleGrouos()
         }
     }
 
@@ -53,9 +44,16 @@ struct ContentView: View {
             }
         }
     }
+
+    private func addDefaultMuscleGrouos() {
+        let muscleGroups: [String] = ["Chest", "Back", "Legs", "Shoulders", "Biceps", "Triceps", "Forearms", "Abs"]
+        for muscleGroup in muscleGroups.enumerated() {
+            modelContext.insert(MuscleGroup(id: muscleGroup.offset, localizaedName: muscleGroup.element))
+        }
+    }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: MuscleGroup.self, inMemory: true)
 }
