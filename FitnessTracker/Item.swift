@@ -12,10 +12,12 @@ import SwiftData
 final class MuscleGroup {
     @Attribute(.unique) var id: UUID
     var localizaedName: String
+    var exercises: [Exercise]
 
-    init(id: UUID, localizaedName: String) {
+    init(id: UUID, localizaedName: String, exercises: [Exercise]) {
         self.id = id
         self.localizaedName = localizaedName
+        self.exercises = exercises
     }
 }
 

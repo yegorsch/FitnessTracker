@@ -87,5 +87,5 @@ struct AddExerciseEntryView: View {
 }
 
 #Preview {
-    AddExerciseEntryView(muscleGroup: .init(id: .init(), localizaedName: "Chest"), exercise: .init(id: .init(), localizaedName: "Bench Press", muscleGroup: .init(id: .init(), localizaedName: "Chest")))
+    AddExerciseEntryView(muscleGroup: .init(id: .init(), localizaedName: "Chest", exercises: []), exercise: .init(id: .init(), localizaedName: "Bench Press", muscleGroup: .init(id: .init(), localizaedName: "Chest", exercises: [])))
 }
