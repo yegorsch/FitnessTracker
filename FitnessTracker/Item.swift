@@ -9,20 +9,11 @@ import Foundation
 import SwiftData
 
 @Model
-final class Item {
-    var timestamp: Date
-    
-    init(timestamp: Date) {
-        self.timestamp = timestamp
-    }
-}
-
-@Model
 final class MuscleGroup {
-    @Attribute(.unique) var id: Int
+    @Attribute(.unique) var id: UUID
     var localizaedName: String
 
-    init(id: Int, localizaedName: String) {
+    init(id: UUID, localizaedName: String) {
         self.id = id
         self.localizaedName = localizaedName
     }
@@ -30,11 +21,11 @@ final class MuscleGroup {
 
 @Model
 final class Exercise {
-    @Attribute(.unique) var id: Int
+    @Attribute(.unique) var id: UUID
     var localizaedName: String
     var muscleGroup: MuscleGroup
 
-    init(id: Int, localizaedName: String, muscleGroup: MuscleGroup) {
+    init(id: UUID, localizaedName: String, muscleGroup: MuscleGroup) {
         self.id = id
         self.localizaedName = localizaedName
         self.muscleGroup = muscleGroup
@@ -43,28 +34,17 @@ final class Exercise {
 
 @Model
 final class ExerciseEntry {
-    @Attribute(.unique) var id: Int
-    var exercise: Exercise
-    var entries: [RepitionEntry]
-    var date: Date
-
-    init(id: Int, exercise: Exercise, entries: [RepitionEntry]) {
-        self.id = id
-        self.exercise = exercise
-        self.entries = entries
-        self.date = .init()
-    }
-}
-
-@Model
-final class RepitionEntry {
-    @Attribute(.unique) var id: Int
+    @Attribute(.unique) var id: UUID
     var weight: Double
     var reps: Int
+    var exercise: Exercise
+    var date: Date
 
-    init(id: Int, weight: Double, reps: Int) {
+    init(id: UUID, weight: Double, reps: Int, exercise: Exercise, date: Date) {
         self.id = id
         self.weight = weight
         self.reps = reps
+        self.exercise = exercise
+        self.date = date
     }
 }

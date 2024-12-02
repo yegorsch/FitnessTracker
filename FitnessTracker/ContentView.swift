@@ -30,13 +30,6 @@ struct ContentView: View {
         }
     }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
@@ -48,7 +41,7 @@ struct ContentView: View {
     private func addDefaultMuscleGrouos() {
         let muscleGroups: [String] = ["Chest", "Back", "Legs", "Shoulders", "Biceps", "Triceps", "Forearms", "Abs"]
         for muscleGroup in muscleGroups.enumerated() {
-            modelContext.insert(MuscleGroup(id: muscleGroup.offset, localizaedName: muscleGroup.element))
+            modelContext.insert(MuscleGroup(id: .init(), localizaedName: muscleGroup.element))
         }
     }
 }

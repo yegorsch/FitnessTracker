@@ -14,15 +14,19 @@ struct AddExerciseEntryView: View {
     @State private var reps: Int = 8
     @State private var date: Date = Date()
     @State private var exerciseName: String = ""
-    @State private var repetitionEntries: [RepitionEntry] = []
-    private var exercise: Exercise?
+    @State private var repetitionEntries: [ExerciseEntry] = []
+    private var exercise: Exercise
     private var muscleGroup: MuscleGroup
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
-    init(muscleGroup: MuscleGroup, exercise: Exercise?) {
+    init(muscleGroup: MuscleGroup,
+         exercise: Exercise?) {
         self.muscleGroup = muscleGroup
-        self.exercise = exercise
+        self.exercise = exercise ?? Exercise(id: .init(),
+                                             localizaedName: "",
+                                             muscleGroup: muscleGroup)
     }
 
     var body: some View {
@@ -33,11 +37,7 @@ struct AddExerciseEntryView: View {
                 }
 
                 Section(header: Text("Exercise")) {
-                    if let exercise = self.exercise {
-                        Text(exercise.localizaedName)
-                    } else {
-                        TextField("Exercise name", text: $exerciseName)
-                    }
+                    Text(exerciseName)
                 }
 
                 Section(header: Text("Repetition Details")) {
@@ -45,7 +45,11 @@ struct AddExerciseEntryView: View {
                         .keyboardType(.decimalPad)
                     Stepper("Reps: \(reps)", value: $reps, in: 1...100)
                     Button("Add Repetition Entry") {
-                        let newEntry = RepitionEntry(id: repetitionEntries.count + 1, weight: Double(weight) ?? 0, reps: reps)
+                        let newEntry = ExerciseEntry(id: .init(),
+                                                     weight: Double(weight) ?? 0.0,
+                                                     reps: reps,
+                                                     exercise: exercise,
+                                                     date: .init())
                         repetitionEntries.append(newEntry)
                         // Reset fields for new entry
                         weight = ""
@@ -76,20 +80,12 @@ struct AddExerciseEntryView: View {
     }
 
     private func saveExerciseEntry() {
-        if let exercise {
-            let newEntry = ExerciseEntry(
-                id: Int.random(in: 1...1000),
-                exercise: exercise,
-                entries: repetitionEntries
-            )
-            newEntry.date = date
-            // Add saving logic here, e.g., save to a database or observable model
-            print("Exercise Entry Saved: \(newEntry)")
-            dismiss()
+        for entry in repetitionEntries {
+            modelContext.insert(entry)
         }
     }
 }
 
 #Preview {
-    AddExerciseEntryView(muscleGroup: .init(id: 0, localizaedName: "Chest"), exercise: .init(id: 0, localizaedName: "Bench Press", muscleGroup: .init(id: 0, localizaedName: "Chest")))
+    AddExerciseEntryView(muscleGroup: .init(id: .init(), localizaedName: "Chest"), exercise: .init(id: .init(), localizaedName: "Bench Press", muscleGroup: .init(id: .init(), localizaedName: "Chest")))
 }
