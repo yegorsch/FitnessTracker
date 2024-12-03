@@ -14,13 +14,14 @@ struct AddExerciseEntryView: View {
     @State private var reps: Int = 8
     @State private var date: Date = Date()
     @State private var exerciseName: String = ""
-    @State private var repetitionEntries: [ExerciseEntry] = []
     private var exercise: Exercise
 
+    @State private var repetitionEntries: [ExerciseEntry] = []
     @Environment(\.modelContext) private var modelContext
 
     init(exercise: Exercise) {
         self.exercise = exercise
+        _exerciseName = State(initialValue: exercise.localizaedName)
     }
 
     var body: some View {
@@ -31,7 +32,9 @@ struct AddExerciseEntryView: View {
                 }
 
                 Section(header: Text("Exercise")) {
-                    Text(exercise.localizaedName)
+                    TextField("Enter exercise name", text: $exerciseName).onChange(of: exerciseName) {
+                        exercise.localizaedName = exerciseName
+                    }
                 }
 
                 Section(header: Text("Repetition Details")) {
@@ -39,8 +42,7 @@ struct AddExerciseEntryView: View {
                         .keyboardType(.decimalPad)
                     Stepper("Reps: \(reps)", value: $reps, in: 1...100)
                     Button("Add Repetition Entry") {
-                        let newEntry = ExerciseEntry(id: .init(),
-                                                     weight: Double(weight) ?? 0.0,
+                        let newEntry = ExerciseEntry(weight: Double(weight) ?? 0.0,
                                                      reps: reps,
                                                      exercise: exercise,
                                                      date: .init())

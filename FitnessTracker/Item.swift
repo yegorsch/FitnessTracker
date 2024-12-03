@@ -9,13 +9,26 @@ import Foundation
 import SwiftData
 
 @Model
+final class Workout {
+    @Attribute(.unique) var id: UUID
+    var localizedName: String
+    var muscleGroups: [MuscleGroup]
+
+    init(localizedName: String, muscleGroups: [MuscleGroup]) {
+        self.id = .init()
+        self.localizedName = localizedName
+        self.muscleGroups = muscleGroups
+    }
+}
+
+@Model
 final class MuscleGroup {
     @Attribute(.unique) var id: UUID
     var localizaedName: String
     var exercises: [Exercise]
 
-    init(id: UUID, localizaedName: String, exercises: [Exercise]) {
-        self.id = id
+    init(localizaedName: String, exercises: [Exercise]) {
+        self.id = .init()
         self.localizaedName = localizaedName
         self.exercises = exercises
     }
@@ -27,8 +40,8 @@ final class Exercise {
     var localizaedName: String
     var muscleGroup: MuscleGroup
 
-    init(id: UUID, localizaedName: String, muscleGroup: MuscleGroup) {
-        self.id = id
+    init(localizaedName: String, muscleGroup: MuscleGroup) {
+        self.id = .init()
         self.localizaedName = localizaedName
         self.muscleGroup = muscleGroup
     }
@@ -42,8 +55,8 @@ final class ExerciseEntry {
     var exercise: Exercise
     var date: Date
 
-    init(id: UUID, weight: Double, reps: Int, exercise: Exercise, date: Date) {
-        self.id = id
+    init(weight: Double, reps: Int, exercise: Exercise, date: Date) {
+        self.id = .init()
         self.weight = weight
         self.reps = reps
         self.exercise = exercise

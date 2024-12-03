@@ -70,7 +70,7 @@ struct ContentView: View {
 
     private func addExercise(to muscleGroup: MuscleGroup, name: String) {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        modelContext.insert(Exercise(id: .init(), localizaedName: name, muscleGroup: muscleGroup))
+        modelContext.insert(Exercise(localizaedName: name, muscleGroup: muscleGroup))
         try! modelContext.save()
         newGroupNames[muscleGroup.id] = "" // Clear the text field
     }
@@ -78,9 +78,13 @@ struct ContentView: View {
 
     private func addDefaultMuscleGroups() {
         guard items.isEmpty else { return }
+//        let legsMuscles = MuscleGroup(localizaedName: "Legs", exercises: [])
+//        let shoulderMuscles = MuscleGroup(localizaedName: "Shoulders", exercises: [])
+//        let absMuscles = MuscleGroup(localizaedName: "Abs", exercises: [])
+
         let muscleGroups: [String] = ["Chest", "Back", "Legs", "Shoulders", "Biceps", "Triceps", "Forearms", "Abs"]
         for muscleGroup in muscleGroups.enumerated() {
-            modelContext.insert(MuscleGroup(id: .init(), localizaedName: muscleGroup.element, exercises: []))
+            modelContext.insert(MuscleGroup(localizaedName: muscleGroup.element, exercises: []))
         }
     }
 }
