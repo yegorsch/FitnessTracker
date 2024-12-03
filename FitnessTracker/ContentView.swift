@@ -14,13 +14,20 @@ import SwiftData
 struct MuscleGroupSectionView: View {
     let muscleGroup: MuscleGroup
     @Binding var newGroupName: String
+    @Query private var exercises: [Exercise]
     var addExercise: (String) -> Void
+
+    init(muscleGroup: MuscleGroup, newGroupName: Binding<String>, addExercise: @escaping (String) -> Void) {
+        self.muscleGroup = muscleGroup
+        _newGroupName = newGroupName
+        self.addExercise = addExercise
+    }
 
     var body: some View {
         Section(header: Text(muscleGroup.localizaedName)) {
-            ForEach(muscleGroup.exercises) { exercise in
-                NavigationLink(exercise.localizaedName) {
-                    AddExerciseEntryView(muscleGroup: muscleGroup, exercise: exercise)
+            ForEach(exercises) { exercise in
+                if exercise.muscleGroup == muscleGroup {
+                    NavigationLink(exercise.localizaedName, value: exercise)
                 }
             }
             TextField("Add new exercise", text: $newGroupName)
@@ -52,6 +59,8 @@ struct ContentView: View {
                         }
                     )
                 }
+            }.navigationDestination(for: Exercise.self) { exercise in
+                AddExerciseEntryView(exercise: exercise)
             }
         }
         .onAppear {
@@ -62,6 +71,7 @@ struct ContentView: View {
     private func addExercise(to muscleGroup: MuscleGroup, name: String) {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         modelContext.insert(Exercise(id: .init(), localizaedName: name, muscleGroup: muscleGroup))
+        try! modelContext.save()
         newGroupNames[muscleGroup.id] = "" // Clear the text field
     }
 

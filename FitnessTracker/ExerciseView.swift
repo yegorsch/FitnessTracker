@@ -16,28 +16,22 @@ struct AddExerciseEntryView: View {
     @State private var exerciseName: String = ""
     @State private var repetitionEntries: [ExerciseEntry] = []
     private var exercise: Exercise
-    private var muscleGroup: MuscleGroup
 
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
-    init(muscleGroup: MuscleGroup,
-         exercise: Exercise?) {
-        self.muscleGroup = muscleGroup
-        self.exercise = exercise ?? Exercise(id: .init(),
-                                             localizaedName: "",
-                                             muscleGroup: muscleGroup)
+    init(exercise: Exercise) {
+        self.exercise = exercise
     }
 
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Muscle Group")) {
-                    Text(muscleGroup.localizaedName)
+                    Text(exercise.muscleGroup.localizaedName)
                 }
 
                 Section(header: Text("Exercise")) {
-                    Text(exerciseName)
+                    Text(exercise.localizaedName)
                 }
 
                 Section(header: Text("Repetition Details")) {
@@ -87,5 +81,5 @@ struct AddExerciseEntryView: View {
 }
 
 #Preview {
-    AddExerciseEntryView(muscleGroup: .init(id: .init(), localizaedName: "Chest", exercises: []), exercise: .init(id: .init(), localizaedName: "Bench Press", muscleGroup: .init(id: .init(), localizaedName: "Chest", exercises: [])))
+//    AddExerciseEntryView(muscleGroup: .init(id: .init(), localizaedName: "Chest", exercises: []), exercise: .init(id: .init(), localizaedName: "Bench Press", muscleGroup: .init(id: .init(), localizaedName: "Chest", exercises: [])))
 }
