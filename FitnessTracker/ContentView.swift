@@ -34,7 +34,7 @@ struct MuscleGroupSectionView: View {
                 .onSubmit {
                     addExercise(newGroupName)
                 }
-        }
+        }.headerProminence(.increased)
     }
 }
 
@@ -78,14 +78,20 @@ struct ContentView: View {
 
     private func addDefaultMuscleGroups() {
         guard items.isEmpty else { return }
-//        let legsMuscles = MuscleGroup(localizaedName: "Legs", exercises: [])
-//        let shoulderMuscles = MuscleGroup(localizaedName: "Shoulders", exercises: [])
-//        let absMuscles = MuscleGroup(localizaedName: "Abs", exercises: [])
+        let legsMuscles = MuscleGroup(localizaedName: "Legs", exercises: [])
+        let shoulderMuscles = MuscleGroup(localizaedName: "Shoulders", exercises: [])
+        let absMuscles = MuscleGroup(localizaedName: "Abs", exercises: [])
 
-        let muscleGroups: [String] = ["Chest", "Back", "Legs", "Shoulders", "Biceps", "Triceps", "Forearms", "Abs"]
-        for muscleGroup in muscleGroups.enumerated() {
-            modelContext.insert(MuscleGroup(localizaedName: muscleGroup.element, exercises: []))
-        }
+        let chestMuscles = MuscleGroup(localizaedName: "Chest", exercises: [])
+        let backMuscles = MuscleGroup(localizaedName: "Back", exercises: [])
+
+        let bicepMuscles = MuscleGroup(localizaedName: "Biceps", exercises: [])
+        let tricepMuscles = MuscleGroup(localizaedName: "Triceps", exercises: [])
+        let forearmsMuscles = MuscleGroup(localizaedName: "Forearms", exercises: [])
+
+        let allMuscles: [MuscleGroup] = [legsMuscles, shoulderMuscles, absMuscles, chestMuscles, backMuscles, bicepMuscles, tricepMuscles, forearmsMuscles]
+        allMuscles.forEach(modelContext.insert)
+        try! modelContext.save()
     }
 }
 

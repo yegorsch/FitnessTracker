@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C0CD9EFA-6DCE-4D9A-AEC6-96CB0519FA8F"
+            uuid = "EA3DB055-9A35-4BAE-BB1A-3808C89AFDB0"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "FitnessTracker/ContentView.swift"
+            filePath = "FitnessTracker/ExerciseView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
-            landmarkName = "addExercise(to:name:)"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "deleteExerciseEntry(entry:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

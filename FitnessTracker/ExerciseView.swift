@@ -8,12 +8,14 @@
 import Foundation
 import SwiftUI
 import SwiftData
+import Charts
 
 struct AddExerciseEntryView: View {
     @State private var weight: String = ""
     @State private var reps: Int = 8
     @State private var date: Date = Date()
     @State private var exerciseName: String = ""
+    @State private var isExpanded: Bool = false
     private var exercise: Exercise
 
     @Query private var exerciseEntries: [ExerciseEntry]
@@ -23,7 +25,7 @@ struct AddExerciseEntryView: View {
         self.exercise = exercise
         _exerciseName = State(initialValue: exercise.localizaedName)
         let exerciseId = exercise.id
-        _exerciseEntries =  Query(filter: #Predicate<ExerciseEntry> { $0.exercise.id == exerciseId })
+        _exerciseEntries =  Query(filter: #Predicate<ExerciseEntry> { $0.exercise.id == exerciseId }, sort: \.date, order: .reverse)
     }
 
     var body: some View {
@@ -56,21 +58,66 @@ struct AddExerciseEntryView: View {
                 }
 
                 if !exerciseEntries.isEmpty {
-                    Section(header: Text("Repetition Entries")) {
-                        List(exerciseEntries, id: \.id) { entry in
-                            VStack(alignment: .leading) {
-                                Text("Weight: \(entry.weight, specifier: "%.2f") kg")
-                                Text("Reps: \(entry.reps)")
+                    Section {
+                        DisclosureGroup(isExpanded: $isExpanded) {
+                            List {
+                                ForEach(exerciseEntries, id: \.id) { entry in
+                                    VStack(alignment: .leading) {
+                                        Text("Weight: \(formattedWeight(entry.weight)) kg")
+                                        Text("Reps: \(entry.reps)")
+                                    }
+                                }
+                                .onDelete { offsets in
+                                    for index in offsets {
+                                        let entryToDelete = exerciseEntries[index]
+                                        deleteExerciseEntry(entry: entryToDelete)
+                                    }
+                                }
                             }
+                        } label: {
+                            Text("Repetition Entries")
+                                .font(.headline)
                         }
                     }
                 }
+
+                // Chart Section
+                Section(header: Text("Progress Chart")) {
+                    Chart(exerciseEntries) { entry in
+                        LineMark(
+                            x: .value("Date", entry.date),
+                            y: .value("Weight", entry.weight)
+                        )
+                        .foregroundStyle(.blue)
+                        .symbol(Circle())
+                    }
+                    .frame(height: 200)
+                }
+                .chartXScale(domain: .automatic)
+                .chartXAxis {
+                    AxisMarks(values: .automatic) // Adjust stride for your needs (e.g., day, week, month)
+                }
+
             }
         }.navigationTitle("Add Exercise Entry")
          .navigationBarTitleDisplayMode(.inline)
     }
+
+    private func deleteExerciseEntry(entry: ExerciseEntry) {
+        modelContext.delete(entry)
+        try! modelContext.save()
+    }
+
+    private func formattedWeight(_ weight: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 1 // Show up to 1 decimal place
+        formatter.minimumFractionDigits = 0 // Avoid trailing zeros for whole numbers
+        return formatter.string(from: NSNumber(value: weight)) ?? "\(weight)"
+    }
+
+
+
 }
 
-#Preview {
-//    AddExerciseEntryView(muscleGroup: .init(id: .init(), localizaedName: "Chest", exercises: []), exercise: .init(id: .init(), localizaedName: "Bench Press", muscleGroup: .init(id: .init(), localizaedName: "Chest", exercises: [])))
-}
+
