@@ -16,12 +16,14 @@ struct AddExerciseEntryView: View {
     @State private var exerciseName: String = ""
     private var exercise: Exercise
 
-    @State private var repetitionEntries: [ExerciseEntry] = []
+    @Query private var exerciseEntries: [ExerciseEntry]
     @Environment(\.modelContext) private var modelContext
 
     init(exercise: Exercise) {
         self.exercise = exercise
         _exerciseName = State(initialValue: exercise.localizaedName)
+        let exerciseId = exercise.id
+        _exerciseEntries =  Query(filter: #Predicate<ExerciseEntry> { $0.exercise.id == exerciseId })
     }
 
     var body: some View {
@@ -46,16 +48,16 @@ struct AddExerciseEntryView: View {
                                                      reps: reps,
                                                      exercise: exercise,
                                                      date: .init())
-                        repetitionEntries.append(newEntry)
+                        modelContext.insert(newEntry)
                         // Reset fields for new entry
                         weight = ""
                         reps = 8
                     }
                 }
 
-                if !repetitionEntries.isEmpty {
+                if !exerciseEntries.isEmpty {
                     Section(header: Text("Repetition Entries")) {
-                        List(repetitionEntries, id: \.id) { entry in
+                        List(exerciseEntries, id: \.id) { entry in
                             VStack(alignment: .leading) {
                                 Text("Weight: \(entry.weight, specifier: "%.2f") kg")
                                 Text("Reps: \(entry.reps)")
@@ -65,20 +67,7 @@ struct AddExerciseEntryView: View {
                 }
             }
         }.navigationTitle("Add Exercise Entry")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        saveExerciseEntry()
-                    }
-                }
-            }
-    }
-
-    private func saveExerciseEntry() {
-        for entry in repetitionEntries {
-            modelContext.insert(entry)
-        }
+         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
